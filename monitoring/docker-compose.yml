@@ -14,15 +14,22 @@ services:
      - zookeeper
     environment:
      - ZOOKEEPER_CONNECT=zookeeper:2181
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2017-latest
+  postgres:
+    image: quay.io/debezium/example-postgres:${DEBEZIUM_VERSION}
     ports:
-     - 1433:1433
+     - 5432:5432
     environment:
-     - ACCEPT_EULA=Y
-     - MSSQL_PID=Standard
-     - SA_PASSWORD=Password!
-     - MSSQL_AGENT_ENABLED=true
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=postgres
+  # sqlserver:
+  #   image: mcr.microsoft.com/mssql/server:2017-latest
+  #   ports:
+  #    - 1433:1433
+  #   environment:
+  #    - ACCEPT_EULA=Y
+  #    - MSSQL_PID=Standard
+  #    - SA_PASSWORD=Password!
+  #    - MSSQL_AGENT_ENABLED=true
   connect:
     build:
       context: debezium-jmx-exporter
@@ -34,7 +41,8 @@ services:
      - 1976:1976
     links:
      - kafka
-     - sqlserver
+     # - sqlserver
+     - postgres
     environment:
      - BOOTSTRAP_SERVERS=kafka:9092
      - GROUP_ID=1
